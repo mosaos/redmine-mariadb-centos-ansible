@@ -1,0 +1,31 @@
+--- ./docker-compose.yml.org      2020-09-26 19:38:26.237365370 +0900
++++ ./docker-compose.yml        2020-09-26 19:42:52.930076013 +0900
+@@ -14,13 +14,15 @@
+ # License along with this library; if not, write to the Free Software
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+-version: "3.3"
++version: "3.4"
+
+ services:
+   proxy:
++    network_mode: host
+     image: groonga/chupa-text:proxy
+     build:
+       context: proxy
++      network: host
+       cache_from:
+         - groonga/chupa-text:proxy
+     command:
+@@ -30,9 +32,11 @@ services:
+     volumes:
+       - /var/log/chupa-text/proxy:/var/log/squid:z
+   chupa-text:
++    network_mode: host
+     image: groonga/chupa-text:${CHUPA_TEXT_DOCKER_DISTRIBUTION:-ubuntu}-latest
+     build:
+       context: chupa-text/${CHUPA_TEXT_DOCKER_DISTRIBUTION:-ubuntu}
++      network: host
+       cache_from:
+         - groonga/chupa-text:${CHUPA_TEXT_DOCKER_DISTRIBUTION:-ubuntu}-latest
+     command:

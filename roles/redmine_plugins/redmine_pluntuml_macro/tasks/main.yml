@@ -1,0 +1,5 @@
+---
+- name: Checkout PlantUML Macro Plugin
+  git:
+    repo: https://github.com/gelin/plantuml-redmine-macro
+    dest: "{{ redmine_dir }}/plugins/plantuml_macro"

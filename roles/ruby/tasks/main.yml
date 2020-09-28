@@ -1,0 +1,57 @@
+---
+- name: Check ruby install
+  command:
+    test -f {{ ruby_file_name }}
+  register:
+    ruby_test_vars
+  failed_when: ruby_test_vars.rc not in [0, 1]
+  changed_when: false
+
+- name: Ruby already download ?
+  command:
+    test -f "{{ work_dir }}/{{ ruby_archive_version }}"
+  register:
+    ruby_src_test_vars
+  failed_when: ruby_test_vars.rc not in [0, 1]
+  changed_when: false
+
+- name: Download Ruby source code
+  get_url:
+    url: "{{ ruby_url_dir }}/{{ ruby_archive_name }}"
+    dest: "{{ work_dir }}"
+  when: ruby_test_vars.rc == 1 and ruby_src_test_vars.rc == 1
+
+- name: Extract Ruby source
+  unarchive:
+    src: "{{ work_dir }}/{{ ruby_archive_name }}"
+    dest: "{{ work_dir }}"
+    copy: no
+  when: ruby_test_vars.rc == 1 and ruby_src_test_vars.rc == 1
+
+- name: Build Ruby (configure)
+  command:
+    ./configure --disable-install-doc
+    chdir={{ work_dir }}/{{ ruby_archive_version }}
+  when: ruby_test_vars.rc == 1
+
+- name: Build Ruby (make)
+  command:
+    make
+    chdir={{ work_dir }}/{{ ruby_archive_version }}
+  when: ruby_test_vars.rc == 1
+
+- name: Install Ruby
+  become: yes
+  command:
+    make install
+    chdir={{ work_dir }}/{{ ruby_archive_version }}
+  when: ruby_test_vars.rc == 1
+
+- name: Install bundler
+  become: yes
+  gem:
+    name: bundler
+    version: 2.1.4
+    user_install: no
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"

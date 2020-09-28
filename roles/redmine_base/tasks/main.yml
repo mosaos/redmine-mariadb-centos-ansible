@@ -1,0 +1,59 @@
+---
+- name: Check SELinux
+  command:
+    /usr/sbin/selinuxenabled
+  register:
+    result
+  changed_when: false
+  failed_when: result.rc not in [0, 1]
+
+- name: Disable SELinux default setting (/etc/sysconfig/selinux)
+  selinux: state=disabled
+  when: result.rc == 0
+
+- name: Disable SELinux (setenforce)
+  command: setenforce 0
+  when: result.rc == 0
+
+- name: Check firewalld
+  shell: firewall-cmd --state
+  register: firewall_state
+  ignore_errors: yes
+  changed_when: false
+  check_mode: no
+
+- name: Allow http
+  firewalld:
+    zone: public
+    service: http
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when: firewall_state.rc == 0
+
+- name: Enable PowerTools
+  shell: "dnf config-manager --set-enabled PowerTools"
+
+- name: groupinstall 'development tools'
+  dnf:
+    name: '@Development Tools'
+
+- name: Install packages for build ruby / passenger
+  dnf:
+    name: 'openssl-devel,readline-devel,zlib-devel,curl-devel,libyaml-devel,libffi-devel,httpd,httpd-devel,mariadb,mariadb-devel'
+
+- name: Install ImageMagick
+  become: yes
+  dnf:
+    name: 'ImageMagick,ImageMagick-devel'
+
+- name: Install etc.
+  become: yes
+  dnf:
+    name: 'subversion,git,which'
+
+- name: create working directory
+  file:
+    path: "{{ work_dir }}"
+    state: directory
+    mode: 0755

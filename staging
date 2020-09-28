@@ -1,0 +1,12 @@
+[redmine:children]
+redmine_servers
+mariadb_servers
+
+[redmine_servers]
+localhost ansible_connection=local
+
+[mariadb_servers]
+localhost ansible_connection=local
+
+[docker_servers]
+localhost ansible_connection=local

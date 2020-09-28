@@ -1,0 +1,7 @@
+---
+- hosts: redmine_servers
+  roles:
+    - redmine_base
+    - ruby
+    - redmine
+    - apache

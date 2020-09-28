@@ -1,0 +1,5 @@
+---
+- name: farend_basic
+  git:
+    repo: https://github.com/farend/redmine_theme_farend_basic
+    dest: "{{ redmine_dir }}/public/themes/farend_basic"

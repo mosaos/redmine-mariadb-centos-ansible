@@ -1,0 +1,21 @@
+# Group settings
+[groups]
+#developer=harry,sarry
+#observer=john,greg
+
+# Common settings (for all projects)
+[/]
+admin = rw
+* = rw
+guest = r
+
+# Settings for SampleProject
+[SampleProject:/]
+guest = rw
+#@developer = rw
+#@observer= r
+
+# Settings for the (specified) path
+#[SampleProject:/tags]
+#* = r
+#admin = rw

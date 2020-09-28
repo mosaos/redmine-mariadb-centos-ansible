@@ -1,0 +1,17 @@
+[redmine:children]
+redmine_servers
+mariadb_servers
+docker_servers
+
+[redmine_servers]
+redmine ansible_host=192.168.56.102
+
+[mariadb_servers]
+mariadb ansible_host=192.168.56.103
+
+[redmine:vars]
+ansible_user=root
+ansible_ssh_pass=Change_this
+
+[docker_servers]
+docker ansible_host=192.168.56.104

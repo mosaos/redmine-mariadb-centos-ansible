@@ -1,0 +1,5 @@
+---
+- name: Checkout codereview plugin
+  git:
+    repo: https://github.com/haru/redmine_code_review
+    dest: "{{ redmine_dir }}/plugins/redmine_code_review"

@@ -1,0 +1,14 @@
+# Common settings
+# root password of MariaDB
+db_passwd_root: Change_this
+# Remine database name
+db_name_redmine: db_redmine
+# MariaDB user
+db_user_redmine: user_redmine
+# MariaDB password
+db_passwd_redmine: Change_this
+# Work directory
+work_dir: /tmp/redmine-setup
+# Redmine host (Allow db connection from this address)
+# and use this vars for checking production or staging.
+redmine_host: localhost

@@ -1,0 +1,6 @@
+---
+- import_playbook: mariadb_servers.yml
+- import_playbook: redmine_servers.yml
+- import_playbook: redmine_plugins.yml
+- import_playbook: redmine_themes.yml
+#- import_playbook: docker_servers.yml

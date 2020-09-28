@@ -1,0 +1,28 @@
+---
+- name: Install gems
+  command:
+    bundle install --without development test
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+
+- name: Migrate
+  command:
+    bundle exec rake redmine:plugins:migrate
+    chdir={{ redmine_dir }}
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+    RAILS_ENV: production
+
+- name: Change owner of Redmine Directory
+  file:
+    path: "{{ redmine_dir }}"
+    owner: "{{ redmine_dir_owner }}"
+    group: "{{ redmine_dir_group }}"
+    recurse: yes
+
+- name: Restart httpd
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

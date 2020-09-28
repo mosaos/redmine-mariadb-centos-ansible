@@ -1,0 +1,72 @@
+---
+- name: Install packages for SCM Creator
+  dnf:
+    name: 'mod_dav_svn,mod_perl,perl-Digest-SHA1,perl-DBI,perl-DBD-mysql,perl-LDAP,perl-Params-Validate,perl-Module-Runtime,perl-Module-Implementation,perl-Class-Accessor,perl-Class-Data-Inheritable,perl-Crypt-PasswdMD5,perl-Test-Simple,perl-Authen-Simple,perl-CPAN,perl-YAML'
+
+- name: Create directory for module
+  file:
+    path: /etc/httpd/Apache/Authn
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create symlink
+  file:
+    src: /var/lib/redmine/extra/svn/Redmine.pm
+    dest: /etc/httpd/Apache/Authn/Redmine.pm
+    owner: root
+    group: root
+    mode: 0644
+    state: link
+
+- name: Checkout SCM Creator plugin
+  git:
+    repo: https://github.com/farend/scm-creator
+    dest: "{{ redmine_dir }}/plugins/redmine_scm"
+
+- name: Create scm.yml
+  template:
+    src: scm.yml
+    dest: "{{ redmine_dir }}/config/scm.yml"
+    force: no
+
+- name: Create vcs.conf
+  template:
+    src: vcs.conf
+    dest: /etc/httpd/conf.d/vcs.conf
+
+- name: Create git-post-create script
+  template:
+    src: scm-post-create.sh
+    dest: "{{ redmine_dir }}/bin/scm-post-create.sh"
+    mode: 0755
+
+- name: Create directory for svnauthz
+  file:
+    path: /etc/opt/svn/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create svnauthz
+  template:
+    src: svnauthz
+    dest: /etc/opt/svn/svnauthz
+
+- name: Create svn root directory
+  file:
+    path: /var/opt/svn/
+    state: directory
+    owner: apache
+    group: apache
+    mode: 0755
+
+- name: Create git root directory
+  file:
+    path: /var/opt/git/
+    state: directory
+    owner: apache
+    group: apache
+    mode: 0755

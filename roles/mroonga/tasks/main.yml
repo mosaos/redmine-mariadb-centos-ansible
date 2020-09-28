@@ -1,0 +1,56 @@
+---
+- name: Get mariadb_repo_setup
+  get_url:
+    url: https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+    dest: "{{ work_dir }}"
+
+- name: Run mariadb_repo_setup
+  command: "bash {{ work_dir }}/mariadb_repo_setup"
+
+- name: Install groonga-release-latest
+  command: dnf install -y 'https://packages.groonga.org/centos/groonga-release-latest.noarch.rpm'
+
+- name: Install boost-program-options
+  dnf:
+    name: 'boost-program-options,nmap-ncat,galera'
+
+- name: Check mroonga install
+  dnf:
+    list: mariadb-10.4-mroonga
+  register: pkg
+
+- name: Uninstall already installed mariadb-server
+  dnf:
+    name: mariadb*
+    state: absent
+  # when: pkg.results[0].yumstate == 'installed'
+  when: pkg.results|selectattr("yumstate", "match", "installed")|list|length == 0
+  ignore_errors: yes
+
+- name: Install MariaDB-server
+  dnf:
+    name: 'MariaDB-server'
+    disablerepo: AppStream
+  # when: pkg.results[0].yumstate == 'installed'
+  when: pkg.results|selectattr("yumstate", "match", "installed")|list|length == 0
+
+- name: Install mariadb-10.5-mroonga
+  dnf:
+    name: 'mariadb-10.5-mroonga'
+    enablerepo: epel
+  # when: pkg.results[0].yumstate == 'installed'
+  when: pkg.results|selectattr("yumstate", "match", "installed")|list|length == 0
+
+- name: Restart MariaDB
+  service:
+    name: mariadb
+    state: restarted
+    enabled: yes
+
+- name: Initail settings of Mroonga
+  ignore_errors: yes
+  mysql_db:
+    state: import
+    login_password: '{{ db_passwd_root }}'
+    name: all
+    target: /usr/share/mroonga/install.sql

@@ -1,0 +1,5 @@
+---
+- name: Checkout Redmine-Slack
+  git:
+    repo: https://github.com/sciyoshi/redmine-slack.git
+    dest: "{{ redmine_dir }}/plugins/redmine_slack"

@@ -1,0 +1,5 @@
+---
+- name: kodomo
+  git:
+    repo: https://github.com/akiko-pusu/redmine_theme_kodomo
+    dest: "{{ redmine_dir }}/public/themes/kodomo"

@@ -1,0 +1,5 @@
+---
+- name: minimalflat2
+  git:
+    repo: https://github.com/akabekobeko/redmine-theme-minimalflat2
+    dest: "{{ redmine_dir }}/public/themes/minimalflat2"

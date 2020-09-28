@@ -1,0 +1,29 @@
+# Redmine settings
+# DB hostname
+db_host_redmine: localhost
+# Source URL of Redmine
+redmine_svn_url: http://svn.redmine.org/redmine/branches/4.1-stable
+# Redmine directory
+redmine_dir: /var/lib/redmine
+# owner:group(permission) of Redmine directory
+redmine_dir_owner: apache
+redmine_dir_group: apache
+# Redmine language
+redmine_lang: ja
+# Redmine font path (for Japanese)
+redmine_font_path: /usr/share/fonts/truetype/takao-gothic/TakaoPGothic.ttf
+# Source URL of Ruby
+ruby_url_dir: https://cache.ruby-lang.org/pub/ruby/2.6
+ruby_archive_version: ruby-2.6.6
+ruby_archive_ext: tar.bz2
+ruby_archive_name: "{{ ruby_archive_version }}.{{ ruby_archive_ext }}"
+# ruby
+ruby_file_name: /usr/local/bin/ruby
+
+# ----------------------------------------------------------------------
+# SCM Creator
+# ----------------------------------------------------------------------
+# Repository directory of svn (root)
+svn_repodir: /var/opt/svn
+# Repository directory of git (root)
+git_repodir: /var/opt/git

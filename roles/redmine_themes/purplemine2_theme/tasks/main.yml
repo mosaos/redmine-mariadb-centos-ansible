@@ -1,0 +1,5 @@
+---
+- name: PurpleMine2
+  git:
+    repo: https://github.com/mrliptontea/PurpleMine2
+    dest: "{{ redmine_dir }}/public/themes/PurpleMine2"

@@ -1,0 +1,5 @@
+---
+- name: gitmike
+  git:
+    repo: https://github.com/makotokw/redmine-theme-gitmike
+    dest: "{{ redmine_dir }}/public/themes/gitmike"

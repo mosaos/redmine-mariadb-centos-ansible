@@ -1,0 +1,52 @@
+---
+- name: Get chupa-text
+  git:
+    repo: https://github.com/ranguba/chupa-text-docker
+    dest: /var/lib/chupa-text
+    update: yes
+
+- name: Patch docker-compose.yml
+  patch:
+    src: ../files/docker-compose.yml.patch
+    dest: /var/lib/chupa-text/docker-compose.yml
+
+- name: pull chupa-text Docker image
+  command:
+    /usr/local/bin/docker-compose pull
+    chdir=/var/lib/chupa-text
+
+- name: copy chupa-text systemd file
+  copy:
+    src: /var/lib/chupa-text/usr/lib/systemd/system/chupa-text.service
+    dest: /etc/systemd/system/
+    remote_src: yes
+
+- name: create chupa-text log dir
+  file:
+    path: /var/log/chupa-text
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy chupa-text logrotate conf file
+  copy:
+    src: /var/lib/chupa-text/etc/logrotate.d/chupa-text
+    dest: /etc/logrotate.d/
+    remote_src: yes
+
+- name: Pull chupa-text container
+  docker_container:
+    name: chupa-text
+    image: groonga/chupa-text
+
+- name: Pull chupa-text-proxy container
+  docker_container:
+    name: chupa-text-proxy
+    image: groonga/chupa-text:proxy
+
+- name: (Re)boot chupatext
+  service:
+    name: chupa-text
+    state: restarted
+    enabled: yes

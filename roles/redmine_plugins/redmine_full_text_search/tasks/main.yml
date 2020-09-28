@@ -1,0 +1,25 @@
+---
+- name: Checkout full text search plugin
+  git:
+    repo: https://github.com/clear-code/redmine_full_text_search
+    dest: "{{ redmine_dir }}/plugins/full_text_search"
+    update: no
+
+- name: Patch full text search markup_parser.rb
+  patch:
+    src: ../files/markup_parser.rb.patch
+    dest: /var/lib/redmine/plugins/full_text_search/lib/full_text_search/markup_parser.rb
+
+- name: Patch full text search attachment_mapper.rb
+  patch:
+    src: ../files/attachment_mapper.rb.patch
+    dest: /var/lib/redmine/plugins/full_text_search/lib/full_text_search/attachment_mapper.rb
+
+#  Indexing takes a lot of time, so recommend to do this task after installation
+#- name: Create Index
+#  command:
+#    bundle exec rake full_text_search:synchronize
+#    chdir={{ redmine_dir }}
+#  environment:
+#    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+#    RAILS_ENV: production

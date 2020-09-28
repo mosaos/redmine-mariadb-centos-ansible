@@ -1,0 +1,15 @@
+--- attachment_mapper.rb.org	2020-04-03 12:32:22.320466734 -0400
++++ attachment_mapper.rb	2020-04-03 12:33:35.599279622 -0400
+@@ -102,7 +102,11 @@
+       set_extracted_content(fts_target,
+                             content,
+                             [@record.description.presence])
+-      fts_target.save!
++      begin
++        fts_target.save!
++      rescue => e
++        # p e.message
++      end
+     end
+
+     private

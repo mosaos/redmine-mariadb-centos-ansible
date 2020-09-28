@@ -1,0 +1,89 @@
+---
+- name: dnf update.
+  dnf:
+    name: '*'
+    state: latest
+
+- name: sysctl net.ipv4.ip_forward=1
+  command: sysctl net.ipv4.ip_forward=1
+
+- name: edit /etc/sysctl.conf
+  lineinfile:
+    dest: /etc/sysctl.conf
+    line: "net.ipv4.ip_forward=1"
+
+- name: Add Docker repos.
+  command: "{{ item }}"
+  with_items:
+    - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    - dnf repolist
+
+- name: Uninstall podman (conflict with docker-ce)
+  dnf:
+    name: 'podman-docker'
+    state: absent
+
+- name: Install docker
+  command: dnf install -y docker-ce --allowerasing
+  # dnf:
+  #   name: 'docker-ce'
+
+- name: Start docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+
+- name: Get kernel info
+  shell: uname -s
+  register: kernel
+
+- name: Get machine info
+  shell: uname -m
+  register: machine
+
+- name: Get docker-compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.25.0/docker-compose-{{ kernel.stdout }}-{{ machine.stdout }}
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Set python alternatives
+  alternatives:
+    name: python
+    path: /usr/bin/python3
+
+- name: Set pip alternatives
+  command:
+    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+
+- name: pip install docker
+  command:
+    pip install docker
+
+- name: Check firewalld
+  shell: firewall-cmd --state
+  register: firewall_state
+  ignore_errors: yes
+  changed_when: false
+  check_mode: no
+
+- name: Allow pluntuml (port=8080/tcp)
+  firewalld:
+    zone: public
+    port: 8080/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when:
+    - firewall_state.rc == 0
+
+- name: Allow chuppatext
+  firewalld:
+    zone: public
+    port: 3000/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when:
+    - firewall_state.rc == 0

@@ -1,0 +1,68 @@
+---
+- name: Install MariaDB
+  dnf:
+    name: 'mariadb-server,mariadb-devel'
+
+- name: Install MySQL-python
+  dnf:
+    name: 'python3-PyMySQL'
+
+- name: Create /etc/my.cnf
+  become: yes
+  copy:
+    src: ../files/my.cnf
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable MariaDB Service
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Delete anonymous user
+  mysql_user:
+    name: ''
+    state: absent
+  register:
+    result
+  ignore_errors: true
+
+- name: Prohibit remote root login
+  mysql_user:
+    name: root
+    host: "{{ ansible_fqdn }}"
+    state: absent
+
+- name: Delete test database
+  mysql_db:
+    name: test
+    state: absent
+
+- name: Create redmine database
+  mysql_db:
+    name: "{{ db_name_redmine }}"
+
+- name: Create user for redmine db and allow connect from redmine host
+  mysql_user:
+    name: "{{ db_user_redmine }}"
+    host: "{{ item }}"
+    password: "{{ db_passwd_redmine }}"
+    priv: "{{ db_name_redmine }}.*:ALL"
+  with_items:
+    - "{{ redmine_host }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Set MariaDB root password
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ db_passwd_root }}"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost

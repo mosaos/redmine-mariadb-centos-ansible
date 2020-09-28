@@ -1,0 +1,28 @@
+---
+- name: Check firewalld
+  shell: firewall-cmd --state
+  register: firewall_state
+  ignore_errors: yes
+  changed_when: false
+  check_mode: no
+
+- name: Allow mariadb(mysql)
+  firewalld:
+    zone: public
+    service: mysql
+    permanent: yes
+    state: enabled
+    immediate: yes
+  when:
+    - firewall_state.rc == 0
+    - redmine_host != 'localhost'
+
+- name: Install etc.
+  dnf:
+    name: 'subversion,git,which'
+
+- name: create working directory
+  file:
+    path: "{{ work_dir }}"
+    state: directory
+    mode: 0755

@@ -1,0 +1,16 @@
+production:
+  auto_create: true
+  deny_delete: true
+  post_create: {{ redmine_dir }}/bin/scm-post-create.sh
+  allow_add_local: true
+  svn:
+    path: {{ svn_repodir }}
+    svnadmin: /usr/bin/svnadmin
+    url: ", http://localhost/svn"
+  git:
+    path: {{ git_repodir }}
+    git: /usr/bin/git
+    options: --bare
+    url: ", http://localhost/git"
+    update_server_info: true
+    git_ext: true

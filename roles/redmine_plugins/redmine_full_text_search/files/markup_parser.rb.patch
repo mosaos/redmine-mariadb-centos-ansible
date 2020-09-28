@@ -1,0 +1,10 @@
+--- markup_parser.rb.org	2020-04-03 08:37:26.877799269 -0400
++++ markup_parser.rb	2020-04-03 08:37:52.129207084 -0400
+@@ -75,6 +75,7 @@
+         @attributes_stack.last.each do |name, value|
+           case name
+           when "class"
++            return false if value.nil?
+             return false if value.split(/\s+/).include?("wiki-anchor")
+           end
+         end

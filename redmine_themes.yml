@@ -1,0 +1,11 @@
+---
+- hosts: redmine_servers
+  roles:
+    # It's Ok to remove(comment) unnecessary themes.
+    - redmine_themes/farend_basic_theme
+    - redmine_themes/purplemine2_theme
+    - redmine_themes/gitmike_theme
+    - redmine_themes/minimalflat2_theme
+    - redmine_themes/kodomo_theme
+    # postinstall
+    - redmine_plugins/postinstall_plugins

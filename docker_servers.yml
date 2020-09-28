@@ -1,0 +1,6 @@
+---
+- hosts: docker_servers
+  roles:
+    - docker
+    - docker-pluntuml
+    - docker-chupatext

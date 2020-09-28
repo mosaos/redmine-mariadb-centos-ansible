@@ -1,0 +1,5 @@
+---
+- name: Checkout issue templates
+  git:
+    repo: https://github.com/akiko-pusu/redmine_issue_templates
+    dest: "{{ redmine_dir }}/plugins/redmine_issue_templates"

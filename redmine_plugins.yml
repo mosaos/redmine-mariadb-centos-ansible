@@ -1,0 +1,23 @@
+---
+- hosts: mariadb_servers
+  roles:
+#    - mroonga
+- hosts: redmine_servers
+  roles:
+    # It's Ok to remove(comment) unnecessary plugins.
+    # --- My Favorite Plugins ---
+    - redmine_plugins/redmine_scmcreator
+    - redmine_plugins/redmine_codereview
+    - redmine_plugins/redmine_local_avatars
+    - redmine_plugins/redmine_slack
+    - redmine_plugins/redmine_wiki_extensions
+    # --- and Frequently used plugins ---
+    - redmine_plugins/redmine_issue_templates
+    - redmine_plugins/redmine_per_project_formatting
+    - redmine_plugins/redmine_theme_changer
+    # --- other plugins ---
+#    - redmine_plugins/redmine_pluntuml_macro
+    # If install 'Full text search plugin', need to run also mroonga role.
+#    - redmine_plugins/redmine_full_text_search
+    # postinstall
+    - redmine_plugins/postinstall_plugins
